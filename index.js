@@ -1,1 +1,3 @@
-console.log('bjbbh');
+const {  listContacts } = require("./contacts");
+
+listContacts()
