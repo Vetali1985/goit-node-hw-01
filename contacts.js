@@ -3,43 +3,34 @@ const { nanoid } = require('nanoid');
 const path = require('path');
 const contactsPath = path.resolve(__dirname, './db/contacts.json');
 
-
-async function listContacts() {
-  
-  try {
-    const data = await fs.readFile(contactsPath, 'utf8');
+async function readData() {
+  const data = await fs.readFile(contactsPath, 'utf8');
   const result = await JSON.parse(data);
+  return result;
+}
+async function listContacts() {
+    const result= await readData()
     await console.table(result);
-
-  } catch (error) {
-    console.log(error.message)
-  }
 }
 
 async function getContactById(contactId) {
-  try {
-    const data = await fs.readFile(contactsPath, "utf-8");
-    const dataJson = await JSON.parse(data);
-    const contact = await dataJson.find(
+    const result= await readData()
+    const contact = await result.find(
       (item) => Number(item.id) === contactId
     );
     console.log(contact);
-  } catch (e) {
-    console.error(e);
-  }
 }
 
 async function removeContact(contactId) {
   try {
-    const data = await fs.readFile(contactsPath, "utf-8");
-    const parsedData = await JSON.parse(data);
-    const delContact = await parsedData.find(
+    const result= await readData()
+    const delContact = await result.find(
       (item) => Number(item.id) === contactId
     );
     if (delContact) {
-      const index = parsedData.indexOf(delContact);
-      parsedData.splice(index, 1);
-      await fs.writeFile(contactsPath, JSON.stringify(parsedData,null,2), "utf-8");
+      const index = result.indexOf(delContact);
+      result.splice(index, 1);
+      await fs.writeFile(contactsPath, JSON.stringify(result,null,2), "utf-8");
     } else {
       return console.log(`Contact with id=${contactId} not found!!!`.red);
     }
@@ -52,11 +43,10 @@ async function removeContact(contactId) {
   
 async function addContact(name, email, phone) {
   try {
-    const data = await fs.readFile(contactsPath, 'utf8');
-    const parsedData = JSON.parse(data);
+    const result= await readData()
     const id = nanoid();
     const contactNew = { id, name, email, phone };
-    const newContactsList = [...parsedData, contactNew];
+    const newContactsList = [...result, contactNew];
     await fs.writeFile(contactsPath, JSON.stringify(newContactsList, null, 2));
     
 } catch (error) {
