@@ -1,17 +1,16 @@
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
+const contactsPath = path.resolve('contacts.json');
 
-
-function listContacts() {
-  const contactsPath = fs.readFile(path.resolve('contacts.json'), 'utf8', (error, contacts) => {
-  if (error) {
-    console.error(error)
-     }
-    console.log(contacts)
-  })
-  return contactsPath; 
-} 
-
+async function listContacts() {
+  const data = await fs.readFile(contactsPath, 'utf8');
+  const result = await JSON.parse(data);
+  try {
+    await console.log(result)
+  } catch (error) {
+    console.log(error.message)
+  }
+}
 function getContactById(contactId) {
   // ...твій код
 }
